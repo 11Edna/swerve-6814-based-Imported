@@ -75,8 +75,8 @@ public class SwerveSubsystem extends SubsystemBase {
         DriveConstants.kDriveKinematics, gyro.getRotation2d(),
         new SwerveModulePosition[] {
         frontLeft.getPosition(),
-        frontRight.getPosition(),
         backLeft.getPosition(),
+        frontRight.getPosition(),
         backRight.getPosition()
     }, new Pose2d(5.0, 13.5, new Rotation2d()));
 
@@ -176,8 +176,8 @@ public class SwerveSubsystem extends SubsystemBase {
     public void setModuleStates(SwerveModuleState[] desiredStates) {
     //    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         frontLeft.setDesiredState(desiredStates[0]);
-        frontRight.setDesiredState(desiredStates[1]);
-        backLeft.setDesiredState(desiredStates[2]);
+        backLeft.setDesiredState(desiredStates[1]);
+        frontRight.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
 }
