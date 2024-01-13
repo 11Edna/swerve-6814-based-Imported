@@ -44,14 +44,14 @@ public class RobotContainer {
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
                 () -> driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
                 () -> driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
-                () -> !driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
+                () -> false)); //!driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
 
         configureButtonBindings();
 
     }
 
     private void configureButtonBindings() {
-        //new JoystickButton(driverJoytick, 2).whenPressed(() -> swerveSubsystem.zeroHeading());
+        //new JoystickButton(driverJoytick, 2).whileTrue(() -> swerveSubsystem.zeroHeading());
     }
 
     public Command getAutonomousCommand() {
