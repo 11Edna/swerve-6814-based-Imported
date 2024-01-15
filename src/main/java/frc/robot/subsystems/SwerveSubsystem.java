@@ -3,6 +3,7 @@ import java.util.function.Supplier;
 
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,10 +16,12 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 
-import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.geometry.Twist2d;
+import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -69,6 +72,7 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
     private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(13);
+    private SwerveDriveKinematics kinematics;
     // private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
     //        new Rotation2d(0), new SwerveModulePosition[] { frontLeft.getDrivePosition(), frontRight.getDrivePosition(), backLeft.getDrivePosition(), backRight.getDrivePosition()});
     SwerveDriveOdometry odometer = new SwerveDriveOdometry(
@@ -88,6 +92,15 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) {
             }
         }).start();
+
+        AutoBuilder.configureHolonomic(
+            this::getPose, 
+            this::resetOdometry, 
+            this::getSpeeds, 
+            this::driveRobotRelative, 
+            Constants.AutoConstants.pathFollowerConfig, 
+            () -> false, 
+            this);
     }
 
     public void zeroHeading() {
@@ -111,6 +124,10 @@ public class SwerveSubsystem extends SubsystemBase {
         Pose2d pose = odometer.getPoseMeters();
         Translation2d position = pose.getTranslation();
         return odometer.getPoseMeters();
+      }
+
+      public ChassisSpeeds getSpeeds() {
+        return kinematics.toChassisSpeeds();
       }
     
       
@@ -137,6 +154,16 @@ public class SwerveSubsystem extends SubsystemBase {
             backLeft.getPosition(),
             backRight.getPosition()
         }, new Pose2d(5.0, 13.5, new Rotation2d()));
+    }
+    public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
+        driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
+      }
+
+    public void driveRobotRelative(ChassisSpeeds robotRelativeSpeeds){
+        ChassisSpeeds targetSpeeds = ChassisSpeeds.discretize(robotRelativeSpeeds, 0.02);
+
+        SwerveModuleState[] targetStates = kinematics.toSwerveModuleStates(targetSpeeds);
+        setModuleStates(targetStates);
     }
     
     public void updateOdometery(){
