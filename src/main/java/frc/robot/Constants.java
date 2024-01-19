@@ -74,10 +74,10 @@ public final class Constants {
         public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 5.923;
         public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 2.921;
 
-        public static final double speedMultiplier = .5;
+        public static final double speedMultiplier = 1;
         public static final double turnSpeedMultiplier = .6;
 
-        public static final double kPhysicalMaxSpeedMetersPerSecond = 12.5;
+        public static final double kPhysicalMaxSpeedMetersPerSecond = 3.81;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
 
         public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond * speedMultiplier;
@@ -102,8 +102,8 @@ public final class Constants {
                         kMaxAngularSpeedRadiansPerSecond,
                         kMaxAngularAccelerationRadiansPerSecondSquared);
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-        new PIDConstants(5.0, 0, 0), // Translation constants 
-        new PIDConstants(5.0, 0, 0), // Rotation constants 
+        new PIDConstants(9.0, 0, 0), // Translation constants 
+        new PIDConstants(.6, 0, 0), // Rotation constants 
         kMaxSpeedMetersPerSecond, 
         10, // Drive base radius (distance from center to furthest module) 
         new ReplanningConfig());
