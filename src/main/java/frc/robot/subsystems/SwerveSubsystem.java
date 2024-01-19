@@ -80,14 +80,14 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.getPosition(),
         frontRight.getPosition(),
         backRight.getPosition()
-    }, new Pose2d(5.0, 13.5, new Rotation2d()));
+    }, new Pose2d(0.0, 0, new Rotation2d()));
 
     public SwerveSubsystem() {
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
-                resetOdometry();
+                resetOdometry(getPose());
             } catch (Exception e) { System.out.println("Exception in auto: 'SwerveSubsystem()'");
             }
         }).start();
@@ -166,7 +166,8 @@ public class SwerveSubsystem extends SubsystemBase {
             frontRight.getPosition(),
             backLeft.getPosition(),
             backRight.getPosition()
-        }, new Pose2d(5.0, 13.5, new Rotation2d()));
+        }, pose //new Rotation2d()
+        );
     }
     public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
         driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
