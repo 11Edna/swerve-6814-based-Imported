@@ -34,6 +34,11 @@ public final class Constants {
                 new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
+        public static final Translation2d flModuleOffset = new Translation2d(0.4, 0.4);
+        public static final Translation2d frModuleOffset = new Translation2d(0.4, -0.4);
+        public static final Translation2d blModuleOffset = new Translation2d(-0.4, 0.4);
+        public static final Translation2d brModuleOffset = new Translation2d(-0.4, -0.4);
+
         public static final int kFrontLeftDriveMotorPort = 2;
         public static final int kBackLeftDriveMotorPort = 1;
         public static final int kFrontRightDriveMotorPort = 3;
@@ -69,14 +74,15 @@ public final class Constants {
         public static final double kFrontRightDriveAbsoluteEncoderOffsetRad = 5.923;
         public static final double kBackRightDriveAbsoluteEncoderOffsetRad = 2.921;
 
-        public static final double speedMultiplier = .8;
+        public static final double speedMultiplier = .5;
+        public static final double turnSpeedMultiplier = .6;
 
         public static final double kPhysicalMaxSpeedMetersPerSecond = 12.5;
         public static final double kPhysicalMaxAngularSpeedRadiansPerSecond = 2 * 2 * Math.PI;
 
         public static final double kTeleDriveMaxSpeedMetersPerSecond = kPhysicalMaxSpeedMetersPerSecond * speedMultiplier;
-        public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxSpeedMetersPerSecond * speedMultiplier;
-        public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 3;
+        public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxSpeedMetersPerSecond * turnSpeedMultiplier;
+        public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 5;
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
 
     }

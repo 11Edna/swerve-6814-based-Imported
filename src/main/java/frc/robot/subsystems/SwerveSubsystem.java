@@ -73,8 +73,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(13);
     private SwerveDriveKinematics kinematics;
-    // private final SwerveDriveOdometry odometer = new SwerveDriveOdometry(DriveConstants.kDriveKinematics,
-    //        new Rotation2d(0), new SwerveModulePosition[] { frontLeft.getDrivePosition(), frontRight.getDrivePosition(), backLeft.getDrivePosition(), backRight.getDrivePosition()});
     SwerveDriveOdometry odometer = new SwerveDriveOdometry(
         DriveConstants.kDriveKinematics, gyro.getRotation2d(),
         new SwerveModulePosition[] {
@@ -89,9 +87,15 @@ public class SwerveSubsystem extends SubsystemBase {
             try {
                 Thread.sleep(1000);
                 zeroHeading();
-            } catch (Exception e) {
+                resetOdometry();
+            } catch (Exception e) { System.out.println("Exception in auto: 'SwerveSubsystem()'");
             }
         }).start();
+
+        kinematics = new SwerveDriveKinematics(Constants.DriveConstants.flModuleOffset, 
+                                                Constants.DriveConstants.frModuleOffset, 
+                                                Constants.DriveConstants.blModuleOffset, 
+                                                Constants.DriveConstants.brModuleOffset);
 
         AutoBuilder.configureHolonomic(
             this::getPose, 
@@ -126,8 +130,17 @@ public class SwerveSubsystem extends SubsystemBase {
         return odometer.getPoseMeters();
       }
 
+      public SwerveModuleState[] getModuleStates() {
+        SwerveModuleState[] states = new SwerveModuleState[4];
+        states[0] = frontLeft.getState();
+        states [1] = frontRight.getState();
+        states[2] = backLeft.getState();
+        states[3] = backRight.getState();
+        return states;
+      }
+
       public ChassisSpeeds getSpeeds() {
-        return kinematics.toChassisSpeeds();
+        return kinematics.toChassisSpeeds(getModuleStates());
       }
     
       
