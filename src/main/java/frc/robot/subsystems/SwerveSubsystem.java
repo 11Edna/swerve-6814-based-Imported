@@ -15,6 +15,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,11 +27,11 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.interfaces.Gyro;
 
 import static edu.wpi.first.units.Units.Volts;
 
@@ -78,6 +79,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(13);
     private SwerveDriveKinematics kinematics;
+    private final Field2d m_field = new Field2d();
     SwerveDriveOdometry odometer = new SwerveDriveOdometry(
         DriveConstants.kDriveKinematics, gyro.getRotation2d(),
         new SwerveModulePosition[] {
@@ -147,23 +149,6 @@ public class SwerveSubsystem extends SubsystemBase {
       public ChassisSpeeds getSpeeds() {
         return kinematics.toChassisSpeeds(getModuleStates());
       }
-    
-      
-    //   public Command toPose(Pose2d initial, Pose2d destination, Supplier<Pose2d> current) {
-    //     ArrayList<PathPoint> points = new ArrayList<>();
-    //     points.add(new PathPoint(initial.getTranslation(), initial.getRotation()));    
-    //     points.add(new PathPoint(destination.getTranslation(), destination.getRotation()));
-        
-    //     return new PPSwerveControllerCommand(
-    //         PathPlanner.generatePath(new PathConstraints(DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond), points),
-    //         current,
-    //         new PIDController(0.0, 0.0, 0.0),
-    //         new PIDController(0.0, 0.0, 0.0),
-    //         //new PIDController(ModuleConstants.kTurnPID[0], ModuleConstants.kTurnPID[1], ModuleConstants.kTurnPID[2]),
-    //         new PIDController(0.0, 0.0, 0.0),
-    //         this::setModuleStates);
-  //}
-
 
     public void resetOdometry(Pose2d pose) {
         odometer.resetPosition(gyro.getRotation2d(), new SwerveModulePosition[] {
@@ -210,6 +195,8 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Encoder position FR", frontRight.getTurningPosition());
         SmartDashboard.putNumber("Encoder position BL", backLeft.getTurningPosition());
         SmartDashboard.putNumber("Encoder position BR", backRight.getTurningPosition());
+        SmartDashboard.putData("Field", m_field);
+        m_field.setRobotPose(odometer.getPoseMeters());
     }
 
     public void stopModules() {
@@ -220,7 +207,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public void setModuleStates(SwerveModuleState[] desiredStates) {
-    //    SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        //SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         frontLeft.setDesiredState(desiredStates[0]);
         backLeft.setDesiredState(desiredStates[1]);
         frontRight.setDesiredState(desiredStates[2]);

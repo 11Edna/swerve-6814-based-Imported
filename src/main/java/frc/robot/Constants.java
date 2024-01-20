@@ -6,7 +6,6 @@ import com.pathplanner.lib.util.ReplanningConfig;
 
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 
 public final class Constants {
@@ -88,24 +87,11 @@ public final class Constants {
     }
 
     public static final class AutoConstants {
-        public static final double kMaxSpeedMetersPerSecond = DriveConstants.kPhysicalMaxSpeedMetersPerSecond / 4;
-        public static final double kMaxAngularSpeedRadiansPerSecond = //
-                DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond / 10;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3;
-        public static final double kMaxAngularAccelerationRadiansPerSecondSquared = Math.PI / 4;
-        public static final double kPXController = 1.5;
-        public static final double kPYController = 1.5;
-        public static final double kPThetaController = 3;
-
-        public static final TrapezoidProfile.Constraints kThetaControllerConstraints = //
-                new TrapezoidProfile.Constraints(
-                        kMaxAngularSpeedRadiansPerSecond,
-                        kMaxAngularAccelerationRadiansPerSecondSquared);
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(9.0, 0, 0), // Translation constants 
-        new PIDConstants(.6, 0, 0), // Rotation constants 
-        kMaxSpeedMetersPerSecond, 
-        10, // Drive base radius (distance from center to furthest module) 
+        new PIDConstants(0.05, 0, 0), // Rotation constants 
+        DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, 
+        DriveConstants.kWheelBase/2, // Drive base radius (distance from center to furthest module) 
         new ReplanningConfig());
     }
 
