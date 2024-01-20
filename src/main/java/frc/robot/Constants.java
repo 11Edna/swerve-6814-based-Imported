@@ -89,7 +89,7 @@ public final class Constants {
     public static final class AutoConstants {
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(9.0, 0, 0), // Translation constants 
-        new PIDConstants(1.1, 0, 0), // Rotation constants 
+        new PIDConstants(0, 0, 0), // Rotation constants 
         DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, 
         DriveConstants.kWheelBase/2, // Drive base radius (distance from center to furthest module) 
         new ReplanningConfig());

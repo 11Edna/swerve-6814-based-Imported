@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -98,6 +99,23 @@ public class SwerveSubsystem extends SubsystemBase {
             } catch (Exception e) { System.out.println("Exception in auto: 'SwerveSubsystem()'");
             }
         }).start();
+
+        PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
+            // Do whatever you want with the pose here
+            m_field.setRobotPose(pose);
+        });
+
+        // Logging callback for target robot pose
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
+            // Do whatever you want with the pose here
+            m_field.getObject("target pose").setPose(pose);
+        });
+
+        // Logging callback for the active path, this is sent as a list of poses
+        PathPlannerLogging.setLogActivePathCallback((poses) -> {
+            // Do whatever you want with the poses here
+            m_field.getObject("path").setPoses(poses);
+        });
 
         kinematics = new SwerveDriveKinematics(Constants.DriveConstants.flModuleOffset, 
                                                 Constants.DriveConstants.frModuleOffset, 

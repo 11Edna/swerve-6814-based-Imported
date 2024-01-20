@@ -47,7 +47,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
         swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
                 swerveSubsystem,
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
