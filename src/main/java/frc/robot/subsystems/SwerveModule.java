@@ -118,6 +118,24 @@ public class SwerveModule {
         SmartDashboard.putString("Swerve[" + absoluteEncoder.getChannel() + "] state", state.toString());
     }
 
+    public void setDesiredStateAuto(SwerveModuleState state) {
+        int index = 0;
+        if (Math.abs(state.speedMetersPerSecond) < 0.001) {
+            stop();
+            return;
+        }
+        state = SwerveModuleState.optimize(state, getState().angle);
+        driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        turningMotor.set(state.angle.getRadians());
+
+        if (index%10 == 0) {
+            turningEncoder.setPosition(getAbsoluteEncoderRad());
+        }
+            index = index + 1;
+
+        SmartDashboard.putString("SwerveAuto[" + absoluteEncoder.getChannel() + "] state", state.toString());
+    }
+
     public void stop() {
         driveMotor.set(0);
         turningMotor.set(0);

@@ -81,7 +81,7 @@ public class SwerveSubsystem extends SubsystemBase {
     private SwerveDriveKinematics kinematics;
     private final Field2d m_field = new Field2d();
     SwerveDriveOdometry odometer = new SwerveDriveOdometry(
-        DriveConstants.kDriveKinematics, gyro.getRotation2d(),
+        DriveConstants.kDriveKinematics, getRotation2d(),
         new SwerveModulePosition[] {
         frontLeft.getPosition(),
         backLeft.getPosition(),
@@ -123,7 +123,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
 
     public Rotation2d getRotation2d() {
-        return gyro.getRotation2d();
+        return gyro.getRotation2d().times(-1);
     }
 
     public Pose2d getPose() {
@@ -151,7 +151,7 @@ public class SwerveSubsystem extends SubsystemBase {
       }
 
     public void resetOdometry(Pose2d pose) {
-        odometer.resetPosition(gyro.getRotation2d(), new SwerveModulePosition[] {
+        odometer.resetPosition(getRotation2d(), new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
             backLeft.getPosition(),
@@ -171,7 +171,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     
     public void updateOdometery(){
-        odometer.update(gyro.getRotation2d(), new SwerveModulePosition[] {
+        odometer.update(getRotation2d(), new SwerveModulePosition[] {
             frontLeft.getPosition(),
             frontRight.getPosition(),
             backLeft.getPosition(),
@@ -213,4 +213,13 @@ public class SwerveSubsystem extends SubsystemBase {
         frontRight.setDesiredState(desiredStates[2]);
         backRight.setDesiredState(desiredStates[3]);
     }
+
+    public void setModuleStatesAuto(SwerveModuleState[] desiredStates) {
+        //SwerveDriveKinematics.normalizeWheelSpeeds(desiredStates, DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        frontLeft.setDesiredStateAuto(desiredStates[0]);
+        backLeft.setDesiredStateAuto(desiredStates[1]);
+        frontRight.setDesiredStateAuto(desiredStates[2]);
+        backRight.setDesiredStateAuto(desiredStates[3]);
+    }
+
 }
