@@ -33,11 +33,6 @@ public final class Constants {
                 new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
                 new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
 
-        public static final Translation2d flModuleOffset = new Translation2d(0.4, 0.4);
-        public static final Translation2d frModuleOffset = new Translation2d(0.4, -0.4);
-        public static final Translation2d blModuleOffset = new Translation2d(-0.4, 0.4);
-        public static final Translation2d brModuleOffset = new Translation2d(-0.4, -0.4);
-
         public static final int kFrontLeftDriveMotorPort = 2;
         public static final int kBackLeftDriveMotorPort = 1;
         public static final int kFrontRightDriveMotorPort = 3;
@@ -83,13 +78,12 @@ public final class Constants {
         public static final double kTeleDriveMaxAngularSpeedRadiansPerSecond = kPhysicalMaxSpeedMetersPerSecond * turnSpeedMultiplier;
         public static final double kTeleDriveMaxAccelerationUnitsPerSecond = 5;
         public static final double kTeleDriveMaxAngularAccelerationUnitsPerSecond = 3;
-
     }
 
     public static final class AutoConstants {
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
         new PIDConstants(9.0, 0, 0), // Translation constants 
-        new PIDConstants(0, 0, 0), // Rotation constants 
+        new PIDConstants(1.5, 0, 0), // Rotation constants 
         DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, 
         DriveConstants.kWheelBase/2, // Drive base radius (distance from center to furthest module) 
         new ReplanningConfig());

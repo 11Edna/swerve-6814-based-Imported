@@ -4,6 +4,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
@@ -37,7 +38,7 @@ public class SwerveJoystickCmd extends Command {
     @Override
     public void execute() {
         // 1. Get real-time joystick inputs
-        double xSpeed = xSpdFunction.get() * -1;
+        double xSpeed = xSpdFunction.get();
         double ySpeed = ySpdFunction.get();
         double turningSpeed = turningSpdFunction.get();
 
