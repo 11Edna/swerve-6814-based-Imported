@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathPlannerPath;
 
@@ -55,6 +56,7 @@ public class RobotContainer {
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> false)); //!driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
 
+
         configureButtonBindings();
 
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -62,10 +64,13 @@ public class RobotContainer {
         SmartDashboard.putData("StraightAuto", autoChooser);
         SmartDashboard.putData("curvyAuto", autoChooser);
 
+
     }
 
     private void configureButtonBindings() {
+        PathPlannerPath spin = PathPlannerPath.fromPathFile("Spin");
         //new JoystickButton(driverJoytick, 2).whileTrue(() -> swerveSubsystem.zeroHeading());
+        new JoystickButton(driverJoytick, 2).onTrue(AutoBuilder.followPath(spin));
     }
 
     public Command getAutonomousCommand() {

@@ -11,7 +11,7 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static final class ModuleConstants {
-        public static final double kWheelDiameterMeters = Units.inchesToMeters(1.5);
+        public static final double kWheelDiameterMeters = Units.inchesToMeters(4);
         public static final double kDriveMotorGearRatio = 1 / 8.14;
         public static final double kTurningMotorGearRatio = 1 / 21.43;
         public static final double kDriveEncoderRot2Meter = kDriveMotorGearRatio * Math.PI * kWheelDiameterMeters;
@@ -48,10 +48,10 @@ public final class Constants {
         public static final boolean kFrontRightTurningEncoderReversed = true;
         public static final boolean kBackRightTurningEncoderReversed = true;
 
-        public static final boolean kFrontLeftDriveEncoderReversed = false;
-        public static final boolean kBackLeftDriveEncoderReversed = false;
-        public static final boolean kFrontRightDriveEncoderReversed = false;
-        public static final boolean kBackRightDriveEncoderReversed = false;
+        public static final boolean kFrontLeftDriveEncoderReversed = true;
+        public static final boolean kBackLeftDriveEncoderReversed = true;
+        public static final boolean kFrontRightDriveEncoderReversed = true;
+        public static final boolean kBackRightDriveEncoderReversed = true;
 
         public static final int kFrontLeftDriveAbsoluteEncoderPort = 1;
         public static final int kBackLeftDriveAbsoluteEncoderPort = 0;
@@ -85,7 +85,7 @@ public final class Constants {
         new PIDConstants(9.0, 0, 0), // Translation constants 
         new PIDConstants(1.5, 0, 0), // Rotation constants 
         DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, 
-        DriveConstants.kWheelBase/2, // Drive base radius (distance from center to furthest module) 
+        Math.sqrt((DriveConstants.kWheelBase/2*DriveConstants.kWheelBase/2)+(DriveConstants.kTrackWidth/2*DriveConstants.kTrackWidth/2)), // Drive base radius (distance from center to furthest module) 
         new ReplanningConfig());
     }
 
