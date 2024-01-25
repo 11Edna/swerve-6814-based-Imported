@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -32,6 +33,7 @@ public class SwerveModule {
     private final RelativeEncoder turningEncoder;
 
     private final PIDController turningPidController;
+    private final PIDController drivingPIDController;
 
     final AnalogInput absoluteEncoder;
     private final boolean absoluteEncoderReversed;
@@ -62,7 +64,10 @@ public class SwerveModule {
 
         turningPidController = new PIDController(ModuleConstants.kPTurning, 0, 0);
         turningPidController.enableContinuousInput(-Math.PI, Math.PI);
-  
+        
+        drivingPIDController = new PIDController(1, 0.0, 0.0);
+        drivingPIDController.enableContinuousInput(-1, 1);
+
 
         resetEncoders();
     }
@@ -107,6 +112,9 @@ public class SwerveModule {
             return;
         }
         state = SwerveModuleState.optimize(state, getState().angle);
+        SmartDashboard.putNumber("Drive PID", (drivingPIDController.calculate(getDriveVelocity() / DriveConstants.kPhysicalMaxSpeedMetersPerSecond, state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond)));
+        SmartDashboard.putNumber("Drive no PID", (state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
+        // driveMotor.set(drivingPIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond) / DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
         driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
         turningMotor.set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
 
