@@ -82,7 +82,7 @@ public final class Constants {
 
     public static final class AutoConstants {
         public static final HolonomicPathFollowerConfig pathFollowerConfig = new HolonomicPathFollowerConfig(
-        new PIDConstants(9.0, 0, 0), // Translation constants 
+        new PIDConstants(1.0, 0, 0), // Translation constants 
         new PIDConstants(1.5, 0, 0), // Rotation constants 
         DriveConstants.kTeleDriveMaxSpeedMetersPerSecond, 
         Math.sqrt((DriveConstants.kWheelBase/2*DriveConstants.kWheelBase/2)+(DriveConstants.kTrackWidth/2*DriveConstants.kTrackWidth/2)), // Drive base radius (distance from center to furthest module) 
@@ -99,5 +99,9 @@ public final class Constants {
 
         public static final double kDeadband = 0.05;
     }
+
+    public static final class VisionConstants {
+        public static final double kPoseErrorAcceptance = 2.0; // How much error there can be between current stimated pose and vision pose in meters
+      }
 
 }

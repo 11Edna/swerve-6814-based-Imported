@@ -1,6 +1,11 @@
 package frc.robot.subsystems;
 import java.util.function.Supplier;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.ctre.phoenix.led.FireAnimation;
 import com.ctre.phoenix.sensors.WPI_PigeonIMU;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -8,12 +13,18 @@ import com.pathplanner.lib.util.PathPlannerLogging;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -28,6 +39,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.geometry.Twist2d;
 import edu.wpi.first.math.kinematics.Kinematics;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
@@ -79,7 +92,8 @@ public class SwerveSubsystem extends SubsystemBase {
             DriveConstants.kBackRightDriveAbsoluteEncoderReversed);
 
     private final WPI_PigeonIMU gyro = new WPI_PigeonIMU(13);
-    private final Field2d m_field = new Field2d();
+    //private final Field2d m_field = new Field2d();
+    private final Vision vision;
     SwerveDriveOdometry odometer = new SwerveDriveOdometry(
         DriveConstants.kDriveKinematics, getRotation2d(),
         new SwerveModulePosition[] {
@@ -87,9 +101,10 @@ public class SwerveSubsystem extends SubsystemBase {
         backLeft.getPosition(),
         frontRight.getPosition(),
         backRight.getPosition()
-    }, new Pose2d(2, 7.0, new Rotation2d()));
+    }, new Pose2d(2.0, 7.0, new Rotation2d()));
 
-    public SwerveSubsystem() {
+    public SwerveSubsystem(Vision vision) {
+        this.vision = vision;
         new Thread(() -> {
             try {
                 Thread.sleep(1000);
@@ -101,19 +116,19 @@ public class SwerveSubsystem extends SubsystemBase {
 
         PathPlannerLogging.setLogCurrentPoseCallback((pose) -> {
             // Do whatever you want with the pose here
-            m_field.setRobotPose(pose);
+            //m_field.setRobotPose(pose);
         });
 
         // Logging callback for target robot pose
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
             // Do whatever you want with the pose here
-            m_field.getObject("target pose").setPose(pose);
+            //m_field.getObject("target pose").setPose(pose);
         });
 
         // Logging callback for the active path, this is sent as a list of poses
         PathPlannerLogging.setLogActivePathCallback((poses) -> {
             // Do whatever you want with the poses here
-            m_field.getObject("path").setPoses(poses);
+            //m_field.getObject("path").setPoses(poses);
         });
 
         AutoBuilder.configureHolonomic(
@@ -125,6 +140,12 @@ public class SwerveSubsystem extends SubsystemBase {
             () -> false, 
             this);
     }
+
+    public ChassisSpeeds getChassisSpeed() {
+        return DriveConstants.kDriveKinematics.toChassisSpeeds(frontLeft.getState(), backLeft.getState(),
+            frontRight.getState(),
+            backRight.getState());
+      }
 
     public void zeroHeading() {
         gyro.reset();
@@ -144,8 +165,6 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public Pose2d getAutoPose() {
         updateOdometery();
-        Pose2d pose = odometer.getPoseMeters();
-        Translation2d position = pose.getTranslation();
         return odometer.getPoseMeters();
       }
 
@@ -171,6 +190,12 @@ public class SwerveSubsystem extends SubsystemBase {
         }, pose //new Rotation2d()
         );
     }
+
+    public SwerveModulePosition [] getPosition(){
+        return new SwerveModulePosition[] {frontLeft.getPosition(), backLeft.getPosition(), frontRight.getPosition(),
+            backRight.getPosition()};
+    }
+
     public void driveFieldRelative(ChassisSpeeds fieldRelativeSpeeds) {
         driveRobotRelative(ChassisSpeeds.fromFieldRelativeSpeeds(fieldRelativeSpeeds, getPose().getRotation()));
       }
@@ -207,8 +232,11 @@ public class SwerveSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Encoder position FR", frontRight.getTurningPosition());
         SmartDashboard.putNumber("Encoder position BL", backLeft.getTurningPosition());
         SmartDashboard.putNumber("Encoder position BR", backRight.getTurningPosition());
-        SmartDashboard.putData("Field", m_field);
-        m_field.setRobotPose(odometer.getPoseMeters());
+        //SmartDashboard.putData("Field", m_field);
+        //m_field.setRobotPose(odometer.getPoseMeters());
+        vision.getEstimatedGlobalPose(getPose());
+        //updatePose();
+
     }
 
     public void stopModules() {

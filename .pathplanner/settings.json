@@ -10,7 +10,7 @@
     "New Folder",
     "New New Folder"
   ],
-  "defaultMaxVel": 3.81,
+  "defaultMaxVel": 2.0,
   "defaultMaxAccel": 2.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,

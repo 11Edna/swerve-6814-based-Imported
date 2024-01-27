@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 
+import org.photonvision.PhotonCamera;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -43,11 +45,14 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoCommand;
 import frc.robot.commands.SwerveJoystickCmd;
+import frc.robot.subsystems.PoseEstimator;
 import frc.robot.subsystems.SwerveSubsystem;
+import frc.robot.subsystems.Vision;
 
 public class RobotContainer {
-
-    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem();
+    private final Vision vision = new Vision();
+    private final SwerveSubsystem swerveSubsystem = new SwerveSubsystem(vision);
+    private final PoseEstimator poseEstimator = new PoseEstimator(swerveSubsystem, vision, new Pose2d(2, 7, swerveSubsystem.getRotation2d()));
     private AutoCommand autoComands = new AutoCommand();
     private final Joystick driverJoytick = new Joystick(OIConstants.kDriverControllerPort);
     private final Joystick buttonBox = new Joystick(1);
@@ -55,7 +60,7 @@ public class RobotContainer {
     private final SendableChooser<Command> autoChooser;
 
     public RobotContainer() {
-        CameraServer.startAutomaticCapture();
+        //CameraServer.startAutomaticCapture();
         swerveSubsystem.setDefaultCommand(new SwerveJoystickCmd(
                 swerveSubsystem,
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
@@ -76,7 +81,7 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         PathPlannerPath spin = PathPlannerPath.fromPathFile("Spin");
-        //new JoystickButton(driverJoytick, 2).whileTrue(() -> swerveSubsystem.zeroHeading());
+        //new JoystickButton(driverJoytick, 2).onTrue(() -> swerveSubsystem.zeroHeading());
         new JoystickButton(driverJoytick, 2).onTrue(AutoBuilder.followPath(spin));
         //cool spin move
         new JoystickButton(buttonBox, 2).onTrue(Commands.runOnce(() -> {
@@ -129,7 +134,7 @@ public class RobotContainer {
             AutoBuilder.followPath(path).schedule();
             }));
 
-            new JoystickButton(buttonBox, 3).onTrue(autoComands.PathToPose(2, 7, 0));
+            new JoystickButton(buttonBox, 3).onTrue(autoComands.PathToPose(3.0, 7.0, 90));
         }
 
     public Command getAutonomousCommand() {
