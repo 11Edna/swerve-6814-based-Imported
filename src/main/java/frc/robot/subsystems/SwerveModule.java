@@ -39,6 +39,9 @@ public class SwerveModule {
     private final boolean absoluteEncoderReversed;
     private final double absoluteEncoderOffsetRad;
 
+    private final SlewRateLimiter filter;
+
+
     private static final CANSparkLowLevel.MotorType kMotorType = CANSparkLowLevel.MotorType.kBrushless;
 
     public SwerveModule(int driveMotorId, int turningMotorId, boolean driveMotorReversed, boolean turningMotorReversed,
@@ -68,6 +71,7 @@ public class SwerveModule {
         drivingPIDController = new PIDController(1, 0.0, 0.0);
         drivingPIDController.enableContinuousInput(-1, 1);
 
+        filter = new SlewRateLimiter(2);
 
         resetEncoders();
     }
@@ -115,7 +119,7 @@ public class SwerveModule {
         SmartDashboard.putNumber("Drive PID", (drivingPIDController.calculate(getDriveVelocity() / DriveConstants.kPhysicalMaxSpeedMetersPerSecond, state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond)));
         SmartDashboard.putNumber("Drive no PID", (state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
         // driveMotor.set(drivingPIDController.calculate(getDriveVelocity(), state.speedMetersPerSecond) / DriveConstants.kTeleDriveMaxSpeedMetersPerSecond);
-        driveMotor.set(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond);
+        driveMotor.set(filter.calculate(state.speedMetersPerSecond / DriveConstants.kPhysicalMaxSpeedMetersPerSecond));
         turningMotor.set(turningPidController.calculate(getTurningPosition(), state.angle.getRadians()));
 
         if (index%10 == 0) {

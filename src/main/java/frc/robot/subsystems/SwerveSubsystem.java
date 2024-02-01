@@ -137,7 +137,7 @@ public class SwerveSubsystem extends SubsystemBase {
             this::getSpeeds, 
             this::driveRobotRelative, 
             Constants.AutoConstants.pathFollowerConfig, 
-            () -> false, 
+            () -> true, 
             this);
     }
 
@@ -149,6 +149,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     public void zeroHeading() {
         gyro.reset();
+    }
+
+    public Command zeroHeadingCommand() {
+        return this.runOnce(() -> this. gyro.reset());
     }
 
     public double getHeading() {

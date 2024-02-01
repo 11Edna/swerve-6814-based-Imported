@@ -66,7 +66,7 @@ public class RobotContainer {
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverYAxis),
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverXAxis),
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
-                () -> false)); //!driverJoytick.getRawButton(OIConstants.kDriverFieldOrientedButtonIdx)));
+                () -> true));
 
 
         configureButtonBindings();
@@ -81,7 +81,7 @@ public class RobotContainer {
 
     private void configureButtonBindings() {
         PathPlannerPath spin = PathPlannerPath.fromPathFile("Spin");
-        //new JoystickButton(driverJoytick, 2).onTrue(() -> swerveSubsystem.zeroHeading());
+        new JoystickButton(driverJoytick, 5).onTrue(swerveSubsystem.zeroHeadingCommand());
         new JoystickButton(driverJoytick, 2).onTrue(AutoBuilder.followPath(spin));
         //cool spin move
         new JoystickButton(buttonBox, 2).onTrue(Commands.runOnce(() -> {
