@@ -73,6 +73,8 @@ public class RobotContainer {
                 () -> -driverJoytick.getRawAxis(OIConstants.kDriverRotAxis),
                 () -> !driverJoytick.b().getAsBoolean()));
 
+        NamedCommands.registerCommand("PathPlan", autoComands.toNote());
+
 
         configureButtonBindings();
 
@@ -85,38 +87,39 @@ public class RobotContainer {
     }
 
     private void configureButtonBindings() {
+        new JoystickButton(buttonBox, 3).onTrue(autoComands.toNote());
+
         PathPlannerPath spin = PathPlannerPath.fromPathFile("Spin");
         driverJoytick.leftBumper().onTrue(swerveSubsystem.zeroHeadingCommand());
         driverJoytick.rightBumper().onTrue(AutoBuilder.followPath(spin));
-        //cool spin move
-        new JoystickButton(buttonBox, 2).onTrue(Commands.runOnce(() -> {
-            //get current pose
-            Pose2d currentPose = swerveSubsystem.getPose();
+        //new JoystickButton(buttonBox, 3).onTrue(PathPlan);
+        //new JoystickButton(buttonBox, 4).onTrue(autoComands.PathToPose(1, 1, 0));
+    }
+        // //cool spin move
+        // new JoystickButton(buttonBox, 2).onTrue(Commands.runOnce(() -> {
+        //     //get current pose
+        //     Pose2d currentPose = swerveSubsystem.getPose();
 
-            //make start, mid, and end pose
-            Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
-            Pose2d midPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(1.0, 0.5)), new Rotation2d());
-            Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(2.0, 0.0)), new Rotation2d());
+        //     //make start, mid, and end pose
+        //     Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+        //     Pose2d midPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(1.0, 0.5)), new Rotation2d());
+        //     Pose2d endPos = new Pose2d(currentPose.getTranslation().plus(new Translation2d(2.0, 0.0)), new Rotation2d());
 
-            List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, midPos, endPos);
-            PathPlannerPath path = new PathPlannerPath(
-                bezierPoints, 
-                new PathConstraints(
-                3.81, 2.0, 
-                Units.degreesToRadians(360), Units.degreesToRadians(540)
-                ),  
-                new GoalEndState(0.0, Rotation2d.fromDegrees(0))
-            );
+        //     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, midPos, endPos);
+        //     PathPlannerPath path = new PathPlannerPath(
+        //         bezierPoints, 
+        //         new PathConstraints(
+        //         3.81, 2.0, 
+        //         Units.degreesToRadians(360), Units.degreesToRadians(540)
+        //         ),  
+        //         new GoalEndState(0.0, Rotation2d.fromDegrees(0))
+        //     );
 
-            // Prevent this path from being flipped on the red alliance, since the given positions are already correct
-            path.preventFlipping = true;
+        //     // Prevent this path from being flipped on the red alliance, since the given positions are already correct
+        //     path.preventFlipping = true;
 
-            AutoBuilder.followPath(path).schedule();
-            }));
-
-            new JoystickButton(buttonBox, 3).onTrue(autoComands.toNote());
-            new JoystickButton(buttonBox, 4).onTrue(autoComands.PathToPose(1, 1, 0));
-        }
+        //     AutoBuilder.followPath(path).schedule();
+        //     }));
 
     public Command getAutonomousCommand() {
         swerveSubsystem.zeroHeading();

@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -89,19 +90,21 @@ public class AutoCommand {
 
     public Command toNote(){
         Pose2d currentPose = swerveSubsystem.getPose();
-        Pose2d targetPose = new Pose2d(currentPose.getTranslation().plus(new Translation2d(vision.getNoteDistance(), 0)), Rotation2d.fromDegrees(0));
+        // Since we are using a holonomic drivetrain, the rotation component of this pose
+        // represents the goal holonomic rotation
+        Pose2d targetPose = new Pose2d(currentPose.getTranslation().plus(new Translation2d(vision.getNoteDistance(), 0.0)), new Rotation2d());
 
+        // Create the constraints to use while pathfinding
         PathConstraints constraints = new PathConstraints(
-                DriveConstants.kTeleDriveMaxAccelerationUnitsPerSecond, DriveConstants.kPhysicalMaxAngularSpeedRadiansPerSecond,
+                3.81, 2.0,
                 Units.degreesToRadians(540), Units.degreesToRadians(720));
 
         // Since AutoBuilder is configured, we can use it to build pathfinding commands
         Command pathfindingCommand = AutoBuilder.pathfindToPose(
-            targetPose,
-            constraints,
-            0.0, // Goal end velocity in meters/sec
-            0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
-    
+                targetPose,
+                constraints,
+                0.0, // Goal end velocity in meters/sec
+                0.0 // Rotation delay distance in meters. This is how far the robot should travel before attempting to rotate.
         );
         return pathfindingCommand;
     }

@@ -72,16 +72,16 @@ public class Vision {
         NetworkTableEntry ty = table.getEntry("ty");
         double targetOffsetAngle_Vertical = ty.getDouble(0.0);
 
-        double limelightMountAngleDegrees = 23.0; 
+        double limelightMountAngleDegrees = 67.2; 
 
-        double limelightLensHeightCm = 41; 
+        double limelightLensHeightM = 0.41; 
 
         double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
         double angleToGoalRadians = angleToGoalDegrees * (3.14159 / 180.0);
 
-        double distanceFromLimelightToGoalCm = (limelightLensHeightCm) / Math.tan(angleToGoalRadians);
-        SmartDashboard.putNumber("Note Distance Cm", distanceFromLimelightToGoalCm);;
+        double distanceFromLimelightToGoalM =  Math.tan(angleToGoalRadians) * (limelightLensHeightM);
+        System.out.println(distanceFromLimelightToGoalM);
 
-        return distanceFromLimelightToGoalCm;
+        return distanceFromLimelightToGoalM;
     }
 }
