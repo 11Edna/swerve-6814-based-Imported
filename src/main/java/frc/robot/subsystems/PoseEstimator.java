@@ -78,7 +78,7 @@ public class PoseEstimator extends SubsystemBase {
         private void updateShuffleboard() {
             Pose2d pose = getPose();
             double[] poseArray = {pose.getX(), pose.getY(), pose.getRotation().getRadians()};
-            //SmartDashboard.putNumberArray("Robot Pose", poseArray);
+            SmartDashboard.putNumberArray("Robot Pose", poseArray);
             //SmartDashboard.putNumber("PoseEst X", poseArray[0]);
             //SmartDashboard.putNumber("PoseEst Y",  poseArray[1]);
             //SmartDashboard.putNumber("PoseEst Gyro",  poseArray[2]);
